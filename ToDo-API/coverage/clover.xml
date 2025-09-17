@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1758017055244" clover="3.2.0">
+  <project timestamp="1758017055244" name="All files">
+    <metrics statements="184" coveredstatements="179" conditionals="73" coveredconditionals="58" methods="39" coveredmethods="37" elements="296" coveredelements="274" complexity="0" loc="184" ncloc="184" packages="6" files="19" classes="19"/>
+    <package name="ToDo-App">
+      <metrics statements="6" coveredstatements="6" conditionals="2" coveredconditionals="1" methods="1" coveredmethods="1"/>
+      <file name="index.js" path="D:\Coding\Projects\ToDo-App\index.js">
+        <metrics statements="6" coveredstatements="6" conditionals="2" coveredconditionals="1" methods="1" coveredmethods="1"/>
+        <line num="7" count="4" type="stmt"/>
+        <line num="8" count="4" type="stmt"/>
+        <line num="9" count="4" type="stmt"/>
+        <line num="10" count="4" type="stmt"/>
+        <line num="12" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="13" count="4" type="stmt"/>
+      </file>
+    </package>
+    <package name="ToDo-App.middleware">
+      <metrics statements="45" coveredstatements="43" conditionals="26" coveredconditionals="22" methods="11" coveredmethods="10"/>
+      <file name="auth.js" path="D:\Coding\Projects\ToDo-App\middleware\auth.js">
+        <metrics statements="8" coveredstatements="8" conditionals="2" coveredconditionals="2" methods="1" coveredmethods="1"/>
+        <line num="3" count="4" type="stmt"/>
+        <line num="4" count="66" type="stmt"/>
+        <line num="5" count="66" type="cond" truecount="2" falsecount="0"/>
+        <line num="7" count="59" type="stmt"/>
+        <line num="8" count="59" type="stmt"/>
+        <line num="9" count="52" type="stmt"/>
+        <line num="10" count="52" type="stmt"/>
+        <line num="12" count="7" type="stmt"/>
+      </file>
+      <file name="authorizeAdmin.js" path="D:\Coding\Projects\ToDo-App\middleware\authorizeAdmin.js">
+        <metrics statements="4" coveredstatements="4" conditionals="2" coveredconditionals="2" methods="1" coveredmethods="1"/>
+        <line num="1" count="4" type="stmt"/>
+        <line num="2" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="3" count="1" type="stmt"/>
+        <line num="5" count="2" type="stmt"/>
+      </file>
+      <file name="authorizeBoth.js" path="D:\Coding\Projects\ToDo-App\middleware\authorizeBoth.js">
+        <metrics statements="6" coveredstatements="6" conditionals="8" coveredconditionals="6" methods="1" coveredmethods="1"/>
+        <line num="1" count="4" type="stmt"/>
+        <line num="2" count="8" type="cond" truecount="1" falsecount="1"/>
+        <line num="4" count="8" type="cond" truecount="1" falsecount="1"/>
+        <line num="6" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="8" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="10" count="2" type="stmt"/>
+      </file>
+      <file name="authorizeTaskOwner.js" path="D:\Coding\Projects\ToDo-App\middleware\authorizeTaskOwner.js">
+        <metrics statements="4" coveredstatements="4" conditionals="4" coveredconditionals="3" methods="1" coveredmethods="1"/>
+        <line num="1" count="4" type="stmt"/>
+        <line num="2" count="8" type="cond" truecount="1" falsecount="1"/>
+        <line num="5" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="6" count="3" type="stmt"/>
+      </file>
+      <file name="authorizeUser.js" path="D:\Coding\Projects\ToDo-App\middleware\authorizeUser.js">
+        <metrics statements="4" coveredstatements="4" conditionals="4" coveredconditionals="3" methods="1" coveredmethods="1"/>
+        <line num="1" count="4" type="stmt"/>
+        <line num="2" count="6" type="cond" truecount="1" falsecount="1"/>
+        <line num="4" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="5" count="1" type="stmt"/>
+      </file>
+      <file name="error.js" path="D:\Coding\Projects\ToDo-App\middleware\error.js">
+        <metrics statements="3" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="2" count="4" type="stmt"/>
+        <line num="3" count="0" type="stmt"/>
+        <line num="5" count="0" type="stmt"/>
+      </file>
+      <file name="exist.js" path="D:\Coding\Projects\ToDo-App\middleware\exist.js">
+        <metrics statements="7" coveredstatements="7" conditionals="2" coveredconditionals="2" methods="2" coveredmethods="2"/>
+        <line num="1" count="4" type="stmt"/>
+        <line num="2" count="20" type="stmt"/>
+        <line num="3" count="36" type="stmt"/>
+        <line num="5" count="36" type="cond" truecount="2" falsecount="0"/>
+        <line num="6" count="5" type="stmt"/>
+        <line num="10" count="31" type="stmt"/>
+        <line num="12" count="31" type="stmt"/>
+      </file>
+      <file name="idValidator.js" path="D:\Coding\Projects\ToDo-App\middleware\idValidator.js">
+        <metrics statements="4" coveredstatements="4" conditionals="2" coveredconditionals="2" methods="1" coveredmethods="1"/>
+        <line num="3" count="4" type="stmt"/>
+        <line num="4" count="43" type="cond" truecount="2" falsecount="0"/>
+        <line num="5" count="5" type="stmt"/>
+        <line num="7" count="38" type="stmt"/>
+      </file>
+      <file name="validate.js" path="D:\Coding\Projects\ToDo-App\middleware\validate.js">
+        <metrics statements="5" coveredstatements="5" conditionals="2" coveredconditionals="2" methods="2" coveredmethods="2"/>
+        <line num="1" count="4" type="stmt"/>
+        <line num="2" count="20" type="stmt"/>
+        <line num="3" count="35" type="stmt"/>
+        <line num="4" count="35" type="cond" truecount="2" falsecount="0"/>
+        <line num="5" count="21" type="stmt"/>
+      </file>
+    </package>
+    <package name="ToDo-App.models">
+      <metrics statements="21" coveredstatements="21" conditionals="0" coveredconditionals="0" methods="6" coveredmethods="6"/>
+      <file name="tasks.js" path="D:\Coding\Projects\ToDo-App\models\tasks.js">
+        <metrics statements="7" coveredstatements="7" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="2"/>
+        <line num="4" count="4" type="stmt"/>
+        <line num="32" count="4" type="stmt"/>
+        <line num="34" count="4" type="stmt"/>
+        <line num="40" count="4" type="stmt"/>
+        <line num="41" count="6" type="stmt"/>
+        <line num="49" count="4" type="stmt"/>
+        <line num="50" count="6" type="stmt"/>
+      </file>
+      <file name="users.js" path="D:\Coding\Projects\ToDo-App\models\users.js">
+        <metrics statements="14" coveredstatements="14" conditionals="0" coveredconditionals="0" methods="4" coveredmethods="4"/>
+        <line num="5" count="4" type="stmt"/>
+        <line num="7" count="4" type="stmt"/>
+        <line num="38" count="4" type="stmt"/>
+        <line num="40" count="16" type="stmt"/>
+        <line num="41" count="16" type="stmt"/>
+        <line num="42" count="16" type="stmt"/>
+        <line num="46" count="4" type="stmt"/>
+        <line num="48" count="242" type="stmt"/>
+        <line num="54" count="4" type="stmt"/>
+        <line num="56" count="4" type="stmt"/>
+        <line num="63" count="4" type="stmt"/>
+        <line num="64" count="3" type="stmt"/>
+        <line num="71" count="4" type="stmt"/>
+        <line num="72" count="13" type="stmt"/>
+      </file>
+    </package>
+    <package name="ToDo-App.routes">
+      <metrics statements="72" coveredstatements="72" conditionals="24" coveredconditionals="20" methods="11" coveredmethods="11"/>
+      <file name="auth.js" path="D:\Coding\Projects\ToDo-App\routes\auth.js">
+        <metrics statements="14" coveredstatements="14" conditionals="4" coveredconditionals="4" methods="2" coveredmethods="2"/>
+        <line num="6" count="4" type="stmt"/>
+        <line num="8" count="4" type="stmt"/>
+        <line num="9" count="7" type="stmt"/>
+        <line num="15" count="7" type="stmt"/>
+        <line num="18" count="4" type="stmt"/>
+        <line num="19" count="5" type="stmt"/>
+        <line num="21" count="5" type="stmt"/>
+        <line num="24" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="25" count="2" type="stmt"/>
+        <line num="29" count="3" type="stmt"/>
+        <line num="30" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="31" count="2" type="stmt"/>
+        <line num="35" count="1" type="stmt"/>
+        <line num="37" count="1" type="stmt"/>
+      </file>
+      <file name="tasks.js" path="D:\Coding\Projects\ToDo-App\routes\tasks.js">
+        <metrics statements="22" coveredstatements="22" conditionals="10" coveredconditionals="8" methods="4" coveredmethods="4"/>
+        <line num="12" count="4" type="stmt"/>
+        <line num="14" count="4" type="stmt"/>
+        <line num="15" count="3" type="stmt"/>
+        <line num="16" count="3" type="stmt"/>
+        <line num="19" count="4" type="stmt"/>
+        <line num="20" count="3" type="stmt"/>
+        <line num="22" count="3" type="stmt"/>
+        <line num="32" count="3" type="stmt"/>
+        <line num="34" count="3" type="stmt"/>
+        <line num="37" count="4" type="stmt"/>
+        <line num="47" count="3" type="stmt"/>
+        <line num="50" count="3" type="stmt"/>
+        <line num="51" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="52" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="53" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="55" count="3" type="stmt"/>
+        <line num="61" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="63" count="3" type="stmt"/>
+        <line num="67" count="4" type="stmt"/>
+        <line num="71" count="2" type="stmt"/>
+        <line num="73" count="2" type="stmt"/>
+        <line num="75" count="2" type="stmt"/>
+      </file>
+      <file name="users.js" path="D:\Coding\Projects\ToDo-App\routes\users.js">
+        <metrics statements="36" coveredstatements="36" conditionals="10" coveredconditionals="8" methods="5" coveredmethods="5"/>
+        <line num="16" count="4" type="stmt"/>
+        <line num="18" count="4" type="stmt"/>
+        <line num="19" count="2" type="stmt"/>
+        <line num="20" count="2" type="stmt"/>
+        <line num="24" count="4" type="stmt"/>
+        <line num="28" count="4" type="stmt"/>
+        <line num="29" count="4" type="stmt"/>
+        <line num="34" count="4" type="stmt"/>
+        <line num="35" count="3" type="stmt"/>
+        <line num="39" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="40" count="2" type="stmt"/>
+        <line num="48" count="1" type="stmt"/>
+        <line num="50" count="1" type="stmt"/>
+        <line num="51" count="1" type="stmt"/>
+        <line num="53" count="1" type="stmt"/>
+        <line num="55" count="1" type="stmt"/>
+        <line num="57" count="1" type="stmt"/>
+        <line num="61" count="4" type="stmt"/>
+        <line num="71" count="5" type="stmt"/>
+        <line num="73" count="5" type="stmt"/>
+        <line num="76" count="5" type="cond" truecount="1" falsecount="1"/>
+        <line num="77" count="5" type="stmt"/>
+        <line num="78" count="5" type="stmt"/>
+        <line num="82" count="5" type="stmt"/>
+        <line num="84" count="5" type="stmt"/>
+        <line num="85" count="8" type="cond" truecount="1" falsecount="1"/>
+        <line num="87" count="8" type="stmt"/>
+        <line num="92" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="93" count="2" type="stmt"/>
+        <line num="98" count="6" type="stmt"/>
+        <line num="101" count="3" type="stmt"/>
+        <line num="109" count="3" type="stmt"/>
+        <line num="114" count="4" type="stmt"/>
+        <line num="118" count="2" type="stmt"/>
+        <line num="120" count="2" type="stmt"/>
+        <line num="122" count="2" type="stmt"/>
+      </file>
+    </package>
+    <package name="ToDo-App.startup">
+      <metrics statements="15" coveredstatements="12" conditionals="6" coveredconditionals="3" methods="4" coveredmethods="3"/>
+      <file name="db.js" path="D:\Coding\Projects\ToDo-App\startup\db.js">
+        <metrics statements="8" coveredstatements="5" conditionals="4" coveredconditionals="2" methods="3" coveredmethods="2"/>
+        <line num="4" count="4" type="stmt"/>
+        <line num="8" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="12" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="19" count="4" type="stmt"/>
+        <line num="21" count="4" type="stmt"/>
+        <line num="22" count="0" type="stmt"/>
+      </file>
+      <file name="logger.js" path="D:\Coding\Projects\ToDo-App\startup\logger.js">
+        <metrics statements="2" coveredstatements="2" conditionals="2" coveredconditionals="1" methods="0" coveredmethods="0"/>
+        <line num="5" count="4" type="stmt"/>
+        <line num="7" count="4" type="stmt"/>
+      </file>
+      <file name="routes.js" path="D:\Coding\Projects\ToDo-App\startup\routes.js">
+        <metrics statements="5" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="8" count="4" type="stmt"/>
+        <line num="9" count="4" type="stmt"/>
+        <line num="10" count="4" type="stmt"/>
+        <line num="11" count="4" type="stmt"/>
+        <line num="12" count="4" type="stmt"/>
+      </file>
+    </package>
+    <package name="ToDo-App.tests">
+      <metrics statements="25" coveredstatements="25" conditionals="15" coveredconditionals="12" methods="6" coveredmethods="6"/>
+      <file name="test.helpers.js" path="D:\Coding\Projects\ToDo-App\tests\test.helpers.js">
+        <metrics statements="25" coveredstatements="25" conditionals="15" coveredconditionals="12" methods="6" coveredmethods="6"/>
+        <line num="8" count="4" type="cond" truecount="1" falsecount="0"/>
+        <line num="14" count="240" type="cond" truecount="1" falsecount="1"/>
+        <line num="15" count="240" type="stmt"/>
+        <line num="16" count="240" type="stmt"/>
+        <line num="17" count="240" type="stmt"/>
+        <line num="23" count="240" type="stmt"/>
+        <line num="24" count="240" type="stmt"/>
+        <line num="25" count="240" type="stmt"/>
+        <line num="31" count="4" type="cond" truecount="0" falsecount="1"/>
+        <line num="37" count="34" type="cond" truecount="1" falsecount="1"/>
+        <line num="38" count="34" type="stmt"/>
+        <line num="47" count="34" type="stmt"/>
+        <line num="48" count="34" type="stmt"/>
+        <line num="55" count="4" type="stmt"/>
+        <line num="56" count="78" type="stmt"/>
+        <line num="57" count="78" type="stmt"/>
+        <line num="66" count="4" type="stmt"/>
+        <line num="67" count="80" type="stmt"/>
+        <line num="68" count="80" type="stmt"/>
+        <line num="71" count="80" type="stmt"/>
+        <line num="76" count="80" type="stmt"/>
+        <line num="93" count="4" type="cond" truecount="1" falsecount="0"/>
+        <line num="94" count="23" type="stmt"/>
+        <line num="102" count="4" type="cond" truecount="1" falsecount="0"/>
+        <line num="103" count="10" type="stmt"/>
+      </file>
+    </package>
+  </project>
+</coverage>
