@@ -15,7 +15,7 @@ const createAdminUser = async function () {
   const hashedPassword = await bcrypt.hash("Ahmedamin123!", salt);
 
   const adminUser = new User({
-    userName: "ahmedamin",
+    username: "ahmedamin",
     email: "ahmedamin11334@icloud.com",
     password: hashedPassword,
     isAdmin: true,

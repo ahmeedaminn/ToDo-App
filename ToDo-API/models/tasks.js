@@ -23,7 +23,7 @@ const tasksSchema = new mongoose.Schema(
         ref: "User",
         required: true,
       },
-      userName: { type: String, required: true },
+      username: { type: String, required: true },
     },
   },
   { timestamps: true }

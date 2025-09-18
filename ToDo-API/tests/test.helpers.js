@@ -6,7 +6,7 @@ import bcrypt from "bcrypt";
  * Create a user in the DB and return { user, token }
  */
 export const createUser = async function ({
-  userName = "user_" + Date.now() + Math.random(),
+  username = "user_" + Date.now() + Math.random(),
   password = "12345678",
   email = `user_${Date.now()}@email.com`,
   isAdmin = false,
@@ -15,7 +15,7 @@ export const createUser = async function ({
   const salt = await bcrypt.genSalt(saltRounds);
   const hashedPass = await bcrypt.hash(password, salt);
   const user = new User({
-    userName,
+    username,
     password: hashedPass,
     email,
     isAdmin,
@@ -41,7 +41,7 @@ export const createTask = async function ({
     dueDate,
     user: {
       userId: user._id,
-      userName: user.userName,
+      username: user.username,
     },
   });
   await task.save();
@@ -69,7 +69,7 @@ export const setupUsers = async () => {
     isAdmin: true,
   });
   const { user: otherUser, token: otherToken } = await createUser({
-    userName: "other_" + Date.now() + Math.random(),
+    username: "other_" + Date.now() + Math.random(),
     email: `other_${Date.now()}@email.com`,
   });
 
@@ -92,7 +92,7 @@ export const setupUsers = async () => {
 
 export const buildUser = function (overrides = {}) {
   return {
-    userName: "updateUser",
+    username: "updateUser",
     password: "1234567890",
     email: "updated@email.com",
     ...overrides,

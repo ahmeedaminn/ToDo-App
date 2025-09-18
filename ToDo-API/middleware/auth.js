@@ -6,7 +6,7 @@ export const auth = async (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_PRIVATE_KEY);
-    req.user = decoded; // payload (_id, userName, isAdmin)
+    req.user = decoded; // payload (_id, username, isAdmin)
     next();
   } catch (err) {
     res.status(400).json({ error: "Invalid token provided" });

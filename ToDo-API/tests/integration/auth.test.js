@@ -72,7 +72,7 @@ describe("auth route /", () => {
 
   it("should return 401 if invalid username", async () => {
     const userData = {
-      userName: "nonexistUser",
+      username: "nonexistUser",
       password: "anyPassword123",
     };
 
@@ -84,7 +84,7 @@ describe("auth route /", () => {
 
   it("should return 401 if invalid password with correct username", async () => {
     const userData = {
-      userName: user.userName,
+      username: user.username,
       password: "wrongpassword123",
     };
 
@@ -108,7 +108,7 @@ describe("auth route /", () => {
 
   it("should send token if user data is correct", async () => {
     const userData = {
-      userName: user.userName,
+      username: user.username,
       password: plainPass,
     };
 

@@ -33,7 +33,7 @@ router.get(
 // POST
 router.post("/", validate(usersCreateValidate), async (req, res) => {
   const existingUser = await User.findOne({
-    $or: [{ email: req.body.email }, { userName: req.body.userName }],
+    $or: [{ email: req.body.email }, { username: req.body.username }],
   });
 
   if (existingUser) {
@@ -41,11 +41,11 @@ router.post("/", validate(usersCreateValidate), async (req, res) => {
       error:
         existingUser.email === req.body.email
           ? "User with given email already exists"
-          : "User with given userName already exists",
+          : "User with given username already exists",
     });
   }
 
-  const user = new User(_.pick(req.body, ["userName", "password", "email"]));
+  const user = new User(_.pick(req.body, ["username", "password", "email"]));
 
   const salt = await bcrypt.genSalt(10);
   user.password = await bcrypt.hash(user.password, salt);
@@ -68,7 +68,7 @@ router.patch(
     authorizeUser,
   ],
   async (req, res) => {
-    const { userName, password, email } = req.body;
+    const { username, password, email } = req.body;
 
     const updatedData = {};
 
@@ -79,7 +79,7 @@ router.patch(
     }
 
     // Field to check uniqueness
-    const uniqueFields = { email, userName };
+    const uniqueFields = { email, username };
 
     for (const [field, value] of Object.entries(uniqueFields)) {
       if (!value) continue;

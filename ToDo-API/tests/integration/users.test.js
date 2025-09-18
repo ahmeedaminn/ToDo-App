@@ -45,10 +45,10 @@ describe("/api/users", () => {
 
       expect(res.status).toBe(200);
       expect(res.body.length).toBeGreaterThanOrEqual(3);
-      const usernames = res.body.map((u) => u.userName);
-      expect(usernames).toContain(user.userName);
-      expect(usernames).toContain(adminUser.userName);
-      expect(usernames).toContain(otherUser.userName);
+      const usernames = res.body.map((u) => u.username);
+      expect(usernames).toContain(user.username);
+      expect(usernames).toContain(adminUser.username);
+      expect(usernames).toContain(otherUser.username);
     });
   });
 
@@ -79,16 +79,16 @@ describe("/api/users", () => {
 
     it("should return the user with given id", async () => {
       const res = await execute(userId, userToken);
-      expect(res.body).toHaveProperty("userName", user.userName);
+      expect(res.body).toHaveProperty("username", user.username);
     });
   });
 
   // POST
   describe("POST /", () => {
-    const execute = async ({ userName, password, email }) => {
+    const execute = async ({ username, password, email }) => {
       return request(server)
         .post(`/api/users/`)
-        .send({ userName, password, email });
+        .send({ username, password, email });
     };
 
     it("should return 400 if email is used", async () => {
@@ -99,7 +99,7 @@ describe("/api/users", () => {
     });
 
     it("should return 400 if username is used", async () => {
-      const newUser = buildUser({ userName: user.userName });
+      const newUser = buildUser({ username: user.username });
 
       const res = await execute(newUser);
       expect(res.status).toBe(400);
@@ -112,17 +112,17 @@ describe("/api/users", () => {
       expect(res.status).toBe(200);
       expect(res.header).toHaveProperty("x-auth-token");
       expect(res.body).toHaveProperty("_id");
-      expect(res.body).toHaveProperty("userName", newUser.userName);
+      expect(res.body).toHaveProperty("username", newUser.username);
     });
   });
 
   // PUT
   describe("PUT id/", () => {
-    const execute = async (id, token, { userName, password, email }) => {
+    const execute = async (id, token, { username, password, email }) => {
       return request(server)
         .patch(`/api/users/${id}`)
         .set("x-auth-token", token)
-        .send({ userName, password, email });
+        .send({ username, password, email });
     };
 
     it("should return 404 if id not found", async () => {
@@ -158,21 +158,21 @@ describe("/api/users", () => {
       expect(res.status).toBe(400);
     });
 
-    it("should return 400 if userName already exist in other user", async () => {
+    it("should return 400 if username already exist in other user", async () => {
       const otherUser = new User(buildUser());
       await otherUser.save();
 
       const updatedUser = buildUser({
-        userName: otherUser.userName,
+        username: otherUser.username,
       });
 
       const res = await execute(userId, userToken, updatedUser);
       expect(res.status).toBe(400);
     });
 
-    it("should return 400 if userName is less than 3", async () => {
+    it("should return 400 if username is less than 3", async () => {
       const updatedUser = buildUser({
-        userName: "a",
+        username: "a",
       });
 
       const res = await execute(userId, userToken, updatedUser);
@@ -180,9 +180,9 @@ describe("/api/users", () => {
       expect(res.body.error).toMatch(/username/i);
     });
 
-    it("should return 400 if userName is more than 50", async () => {
+    it("should return 400 if username is more than 50", async () => {
       const updatedUser = buildUser({
-        userName: new Array(52).join("a"),
+        username: new Array(52).join("a"),
       });
 
       const res = await execute(userId, userToken, updatedUser);
@@ -230,9 +230,9 @@ describe("/api/users", () => {
       expect(res.body.error).toMatch(/email/i);
     });
 
-    it("should allow keeping same email and userName", async () => {
+    it("should allow keeping same email and username", async () => {
       const updatedUser = buildUser({
-        userName: user.userName,
+        username: user.username,
         email: user.email,
       });
 
@@ -241,10 +241,10 @@ describe("/api/users", () => {
     });
 
     it("should update user", async () => {
-      const updatedUser = buildUser({ userName: "newName" });
+      const updatedUser = buildUser({ username: "newName" });
 
       const res = await execute(userId, userToken, updatedUser);
-      expect(res.body).toHaveProperty("userName", updatedUser.userName);
+      expect(res.body).toHaveProperty("username", updatedUser.username);
     });
   });
 

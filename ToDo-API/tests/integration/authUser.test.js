@@ -92,11 +92,11 @@ describe("user auth /", () => {
     // PATCH
     describe("PATCH /", () => {
       //
-      const execute = async (id, token, { userName, password, email }) => {
+      const execute = async (id, token, { username, password, email }) => {
         return request(server)
           .patch(`/api/users/${id}`)
           .set("x-auth-token", token)
-          .send({ userName, password, email });
+          .send({ username, password, email });
       };
 
       it("should return 400 if invalid token", async () => {

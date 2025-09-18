@@ -24,7 +24,7 @@ router.post("/", [auth, validate(tasksValidate)], async (req, res) => {
     status,
     user: {
       userId: req.user._id,
-      userName: req.user.userName,
+      username: req.user.username,
     },
     dueDate: dueDate ? dayjs(dueDate).toDate() : undefined,
   });

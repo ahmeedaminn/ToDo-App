@@ -6,7 +6,7 @@ dotenv.config();
 
 const usersSchema = new mongoose.Schema(
   {
-    userName: {
+    username: {
       type: String,
       trim: true,
       unique: true,
@@ -46,7 +46,7 @@ usersSchema.set("toJSON", {
 usersSchema.methods.generateAuthToken = function () {
   // jwt.sign(payload, privateKey, optional expire)
   return jwt.sign(
-    { _id: this._id, userName: this.userName, isAdmin: this.isAdmin },
+    { _id: this._id, username: this.username, isAdmin: this.isAdmin },
     process.env.JWT_PRIVATE_KEY
   );
 };
@@ -54,7 +54,7 @@ usersSchema.methods.generateAuthToken = function () {
 export const User = mongoose.model("User", usersSchema);
 
 const userFields = {
-  userName: Joi.string().min(3).max(50),
+  username: Joi.string().min(3).max(50),
   password: Joi.string().min(8).max(50),
   email: Joi.string().min(5).max(50).email(),
 };
@@ -62,7 +62,7 @@ const userFields = {
 // Create: all required
 export const usersCreateValidate = (user) =>
   Joi.object({
-    userName: userFields.userName.required(),
+    username: userFields.username.required(),
     password: userFields.password.required(),
     email: userFields.email.required(),
   }).validate(user);
