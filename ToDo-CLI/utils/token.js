@@ -1,4 +1,6 @@
 import fs from "fs";
+import jwt from "jsonwebtoken";
+
 const TOKEN_FILE = ".token";
 
 export const saveToken = function (token) {
@@ -6,10 +8,26 @@ export const saveToken = function (token) {
 };
 
 export const getToken = function () {
-  if (fs.existsSync(TOKEN_FILE)) {
-    return fs.readFileSync(TOKEN_FILE, "utf-8");
+  if (!fs.existsSync(TOKEN_FILE)) {
+    return null;
   }
-  return null;
+  const token = fs.readFileSync(TOKEN_FILE, "utf-8");
+
+  try {
+    const decoded = jwt.decode(token);
+    if (decoded.exp * 1000 < Date.now()) {
+      // Token expired, delete it
+
+      fs.unlinkSync(TOKEN_FILE);
+      return null;
+    }
+  } catch (err) {
+    // Invalid token, delete it
+    fs.unlinkSync(TOKEN_FILE);
+    return null;
+  }
+
+  return token;
 };
 
 export const logout = function () {

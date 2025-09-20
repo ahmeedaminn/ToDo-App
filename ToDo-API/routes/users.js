@@ -22,10 +22,20 @@ router.get("/", [auth, authorizeAdmin], async (req, res) => {
 
 // GET id
 router.get(
-  "/:id",
-  [idValidator, auth, exist(User), authorizeBoth],
+  "/by-id/:id",
+  [idValidator, auth, exist(User), authorizeUser],
   async (req, res) => {
     const user = req.doc;
+    res.send(user);
+  }
+);
+
+router.get(
+  "/by-username/:username",
+  [auth, exist(User), authorizeAdmin],
+  async (req, res) => {
+    const user = req.doc;
+
     res.send(user);
   }
 );
@@ -112,14 +122,27 @@ router.patch(
 
 // DELETE
 router.delete(
-  "/:id",
-  [auth, idValidator, exist(User), authorizeBoth],
+  "/by-id/:id",
+  [auth, idValidator, exist(User), authorizeUser],
   async (req, res) => {
     const user = req.doc;
 
     await user.deleteOne();
 
-    res.send({ deleted: user });
+    res.json({ message: `User ${user.username} deleted successfully` });
+  }
+);
+
+// DELETE
+router.delete(
+  "/by-username/:username",
+  [auth, exist(User), authorizeAdmin],
+  async (req, res) => {
+    const user = req.doc;
+
+    await user.deleteOne();
+
+    res.json({ message: `User ${user.username} deleted successfully` });
   }
 );
 

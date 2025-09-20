@@ -3,12 +3,22 @@ import { apiRequest } from "../../utils/api.js";
 
 dotenv.config({ quiet: true });
 
-export async function updateTask(id, name, status = "pending", dueDate = null) {
+export const updateTask = async function (id, name, status, dueDate) {
   try {
-    const taskData = { name, status };
+    if (!name && !status && !dueDate) {
+      console.error(
+        "❌ Please provide at least one field (--name, --status, --dueDate)."
+      );
+      return;
+    }
+
+    const taskData = {};
+    if (name) taskData.name = name;
+    if (status) taskData.status = status;
     if (dueDate) taskData.dueDate = dueDate;
 
-    const { data } = await apiRequest("patch", `/tasks/${id}`, taskData, true);
+    const res = await apiRequest("patch", `/tasks/${id}`, taskData, true);
+    const data = res.data;
 
     console.log("✅ Task updated successfully!");
     console.log(`   Name: ${data.name}`);
@@ -21,6 +31,6 @@ export async function updateTask(id, name, status = "pending", dueDate = null) {
   } catch (err) {
     if (err.message.includes("Not logged in")) {
       console.error("❌ Please login first.");
-    } else console.error("❌ Failed to create task:", err.message);
+    } else console.error("❌ Failed to update task:", err.message);
   }
-}
+};

@@ -7,10 +7,11 @@ import { exist } from "../middleware/exist.js";
 const router = express.Router();
 
 router.patch(
-  "/:id/set-admin",
-  [auth, authorizeAdmin, idValidator, exist(User)],
+  "/:username/set-admin",
+  [auth, authorizeAdmin],
   async (req, res) => {
-    const user = req.doc;
+    const user = await User.findOne({ username: req.params.username });
+    if (!user) res.status(404).json({ error: "ERROR 404, User NOT found." });
     const { isAdmin } = req.body;
 
     // Validate that isAdmin is provided and is boolean
@@ -23,7 +24,7 @@ router.patch(
     user.isAdmin = isAdmin;
     await user.save();
 
-    res.send(user);
+    res.json({ message: "Admin status updated", user });
   }
 );
 

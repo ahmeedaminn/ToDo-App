@@ -15,6 +15,9 @@ export const login = async function (username, password) {
     console.log("Logged in successfully!");
     return saveToken(token);
   } catch (err) {
-    console.error("❌ Login failed:", err.message);
+    const apiError =
+      err.response?.data?.error || err.response?.data || err.message;
+
+    console.error("❌ Login failed:", apiError);
   }
 };

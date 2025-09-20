@@ -1,9 +1,13 @@
 import { apiRequest } from "../../utils/api.js";
-import { getToken } from "../../utils/token.js";
 
-export const getAllUsers = async function () {
+export const getUser = async function (query, type = "by-id") {
   try {
-    const { data } = await apiRequest("get", "/users", null, true);
+    const { data } = await apiRequest(
+      "get",
+      `/users/${type}/${query}`,
+      null,
+      true
+    );
 
     console.log(data); // ✅ print here
 

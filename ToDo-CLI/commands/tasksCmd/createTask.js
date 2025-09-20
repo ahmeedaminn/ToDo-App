@@ -8,7 +8,8 @@ export async function createTask(name, status = "pending", dueDate = null) {
     const taskData = { name, status };
     if (dueDate) taskData.dueDate = dueDate;
 
-    const { data } = await apiRequest("post", "/tasks", taskData, true);
+    const res = await apiRequest("post", "/tasks", taskData, true);
+    const data = res.data;
 
     console.log("✅ Task created successfully!");
     console.log(`   Name: ${data.name}`);

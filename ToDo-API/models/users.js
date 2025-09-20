@@ -47,7 +47,8 @@ usersSchema.methods.generateAuthToken = function () {
   // jwt.sign(payload, privateKey, optional expire)
   return jwt.sign(
     { _id: this._id, username: this.username, isAdmin: this.isAdmin },
-    process.env.JWT_PRIVATE_KEY
+    process.env.JWT_PRIVATE_KEY,
+    { expiresIn: "1h" }
   );
 };
 

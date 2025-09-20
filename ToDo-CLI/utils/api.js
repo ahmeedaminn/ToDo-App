@@ -34,5 +34,6 @@ export const apiRequest = async function (
 
       throw new Error(data.error || data.message || `API Error (${status})`);
     }
+    throw err;
   }
 };
