@@ -23,11 +23,11 @@ router.get("/", [auth, authorizeAdmin], async (req, res) => {
 // GET id
 router.get(
   "/by-id/:id",
-  [idValidator, auth, exist(User), authorizeUser],
+  [auth, idValidator, exist(User), authorizeUser],
   async (req, res) => {
     const user = req.doc;
     res.send(user);
-  }
+  },
 );
 
 router.get(
@@ -37,7 +37,7 @@ router.get(
     const user = req.doc;
 
     res.send(user);
-  }
+  },
 );
 
 // POST
@@ -67,6 +67,18 @@ router.post("/", validate(usersCreateValidate), async (req, res) => {
   res.header("x-auth-token", token).send(user);
 });
 
+// POST logout of all devices
+router.post("/logout-all", auth, async (req, res) => {
+  const user = await User.findById(req.user._id);
+  
+  // Update the timestamp to right now
+  user.passwordChangedAt = Date.now();
+  await user.save();
+
+  res.json({ message: "Successfully logged out of all devices." });
+});
+
+
 // PUT
 router.patch(
   "/:id",
@@ -86,6 +98,8 @@ router.patch(
     if (password) {
       const salt = await bcrypt.genSalt(10);
       updatedData.password = await bcrypt.hash(password, salt);
+
+      updatedData.tokenValidAfter = new Date();
     }
 
     // Field to check uniqueness
@@ -108,16 +122,15 @@ router.patch(
       updatedData[field] = value;
     }
 
-    const updatedUser = await User.findByIdAndUpdate(
-      req.params.id,
-      updatedData,
-      {
-        new: true,
-      }
-    );
+    const user = req.doc;
+    if (updatedData.username) user.username = updatedData.username;
+    if (updatedData.password) user.password = updatedData.password;
+    if (updatedData.email) user.email = updatedData.email;
 
-    res.send(updatedUser);
-  }
+    await user.save();
+
+    res.send(user);
+  },
 );
 
 // DELETE
@@ -130,7 +143,7 @@ router.delete(
     await user.deleteOne();
 
     res.json({ message: `User ${user.username} deleted successfully` });
-  }
+  },
 );
 
 // DELETE
@@ -140,10 +153,14 @@ router.delete(
   async (req, res) => {
     const user = req.doc;
 
+    // delete all tasks associated with the user
+    await Task.deleteMany({ "user.userId": user._id });
+
+    // then delete the user
     await user.deleteOne();
 
     res.json({ message: `User ${user.username} deleted successfully` });
-  }
+  },
 );
 
 export default router;

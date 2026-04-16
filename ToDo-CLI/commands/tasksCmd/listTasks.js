@@ -4,6 +4,7 @@ import { getToken } from "../../utils/token.js";
 
 dotenv.config({ quiet: true });
 
+// this for the cache and internal use, getTasks is the main function to call from index.js
 export const fetchTasks = async function () {
   const token = getToken();
   if (!token) return null;
@@ -17,6 +18,7 @@ export const fetchTasks = async function () {
   }
 };
 
+// while this is for the actual command that get the tasks for a user and print them to console
 export async function getTasks() {
   try {
     const data = await fetchTasks();

@@ -1,31 +1,32 @@
+import joi from "joi";
 import express from "express";
 import { auth } from "../middleware/auth.js";
 import { User } from "../models/users.js";
-import { idValidator } from "../middleware/idValidator.js";
+import { validate } from "../middleware/validate.js";
 import { authorizeAdmin } from "../middleware/authorizeAdmin.js";
 import { exist } from "../middleware/exist.js";
 const router = express.Router();
 
+const addAdminValidator = (body) => {
+  return joi
+    .object({
+      isAdmin: joi.boolean().required(),
+    })
+    .validate(body);
+};
+
 router.patch(
   "/:username/set-admin",
-  [auth, authorizeAdmin],
+  [auth, authorizeAdmin, exist(User), validate(addAdminValidator)],
   async (req, res) => {
-    const user = await User.findOne({ username: req.params.username });
-    if (!user) res.status(404).json({ error: "ERROR 404, User NOT found." });
+    const user = req.doc;
     const { isAdmin } = req.body;
-
-    // Validate that isAdmin is provided and is boolean
-    if (typeof isAdmin !== "boolean") {
-      return res.status(400).json({
-        error: "isAdmin field is required and must be boolean",
-      });
-    }
 
     user.isAdmin = isAdmin;
     await user.save();
 
     res.json({ message: "Admin status updated", user });
-  }
+  },
 );
 
 export default router;

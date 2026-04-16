@@ -20,6 +20,9 @@ const usersSchema = new mongoose.Schema(
       max: 50,
       required: true,
     },
+    tokenValidAfter: {
+      type: Date,
+    },
     email: {
       type: String,
       required: true,

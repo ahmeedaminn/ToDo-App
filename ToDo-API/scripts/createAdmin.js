@@ -12,11 +12,11 @@ mongoose
 
 const createAdminUser = async function () {
   const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash("Ahmedamin123!", salt);
+  const hashedPassword = await bcrypt.hash(process.env.INTIAL_ADMIN_PASSWORD, salt);
 
   const adminUser = new User({
-    username: "ahmedamin",
-    email: "ahmedamin11334@icloud.com",
+    username: process.env.INTIAL_ADMIN_USERNAME,
+    email: process.env.INTIAL_ADMIN_EMAIL,
     password: hashedPassword,
     isAdmin: true,
   });

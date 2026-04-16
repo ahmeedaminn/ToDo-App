@@ -20,7 +20,7 @@ const tasksSchema = new mongoose.Schema(
     user: {
       userId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        ref: "User", 
         required: true,
       },
       username: { type: String, required: true },
@@ -33,7 +33,7 @@ export const Task = mongoose.model("Task", tasksSchema);
 
 const tasksFields = {
   name: Joi.string().min(2).max(50),
-  status: Joi.string().valid("pending", "in-progress", "done"),
+  status: Joi.string().valid("pending", "in-progress", "completed"),
   dueDate: Joi.date(),
 };
 

@@ -11,11 +11,13 @@ import { idValidator } from "../middleware/idValidator.js";
 
 const router = express.Router();
 
+// get all tasks for the authenticated user
 router.get("/", auth, async (req, res) => {
   const tasks = await Task.find({ "user.userId": req.user._id });
   res.send(tasks);
 });
 
+// create a new task
 router.post("/", [auth, validate(tasksValidate)], async (req, res) => {
   const { name, status, dueDate } = req.body;
 
@@ -44,24 +46,19 @@ router.patch(
     authorizeTaskOwner,
   ],
   async (req, res) => {
+    const task = req.doc;
     const { name, status, dueDate } = req.body;
 
-    // Only include fields that are actually provided in the request
-    const updatedData = {};
-    if (name !== undefined) updatedData.name = name;
-    if (status !== undefined) updatedData.status = status;
-    if (dueDate !== undefined) updatedData.dueDate = dueDate;
+    // 1. Update the fields in memory
+    if (name !== undefined) task.name = name;
+    if (status !== undefined) task.status = status;
+    if (dueDate !== undefined) task.dueDate = dueDate;
 
-    const updatedTask = await Task.findByIdAndUpdate(
-      req.params.id,
-      updatedData,
-      { new: true }
-    );
+    // 2. Save to the db
+    await task.save();
 
-    if (!updatedTask) return res.status(404).json({ error: "Task not found" });
-
-    res.send(updatedTask);
-  }
+    res.send(task);
+  },
 );
 
 router.delete(
@@ -73,7 +70,7 @@ router.delete(
     await task.deleteOne();
 
     res.send({ deleted: task });
-  }
+  },
 );
 
 export default router;

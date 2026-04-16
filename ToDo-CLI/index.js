@@ -114,8 +114,10 @@ switch (command) {
     break;
   case "list-tasks":
     //
-    const users = await getAllUsers(argv.username, argv.pass);
-    console.log(users); // ✅ print here
+    const tasks = await getTasks(argv.username, argv.pass);
+    if (tasks) {
+      console.log(tasks); // ✅ print here
+    }
     break;
   //
   case "create-task":
