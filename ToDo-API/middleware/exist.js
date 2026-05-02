@@ -1,20 +1,36 @@
-export const exist = (Model) => {
+import { asAppError } from "../utils/appError.js";
+
+export const exist = (prismaModel) => {
   return async (req, res, next) => {
     try {
       let doc;
       if (req.params.id) {
-        doc = await Model.findById(req.params.id);
-        if (!doc)
-          return res
-            .status(404)
-            .json({ error: "ERROR 404, Resource with given ID is NOT found" });
+        doc = await prismaModel.findUnique({ where: { id: req.params.id } });
+        if (!doc) {
+          return next(
+            asAppError({
+              status: 404,
+              code: "NOT_FOUND",
+              message: "Resource with given ID was not found",
+              details: { id: req.params.id },
+            }),
+          );
+        }
       } else if (req.params.username) {
-        doc = await Model.findOne({ username: req.params.username });
+        doc = await prismaModel.findUnique({
+          where: { username: req.params.username },
+        });
         //
-        if (!doc)
-          return res.status(404).json({
-            error: "ERROR 404, Resource with given username is NOT found",
-          });
+        if (!doc) {
+          return next(
+            asAppError({
+              status: 404,
+              code: "NOT_FOUND",
+              message: "Resource with given username was not found",
+              details: { username: req.params.username },
+            }),
+          );
+        }
       }
       req.doc = doc;
       next();

@@ -1,0 +1,62 @@
+
+services:
+  # 1. The Database Container
+  postgres:
+    image: postgres:17
+    container_name: ticketing_db
+    environment:
+      # Docker pulls these securely from your .env file
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./docker-data/db:/var/lib/postgresql/data
+
+  # 2. The Storage Container
+  minio:
+    image: minio/minio
+    container_name: ticketing_storage
+    environment:
+      # Mapping MinIO credentials to your S3 keys in the .env file
+      MINIO_ROOT_USER: ${S3_ACCESS_KEY}
+      MINIO_ROOT_PASSWORD: ${S3_SECRET_KEY}
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - ./docker-data/minio:/data
+    command: server /data --console-address ":9001"
+
+  # 3. The API Container (Production-like)
+  api:
+    build: .
+    container_name: ticketing_api
+    depends_on:
+      - postgres
+      - minio
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+
+      # Prisma/Postgres (inside the compose network, host is the service name `postgres`)
+      DATABASE_URL: postgresql://ticketing_admin:SecurePass123%21@postgres:5432/ticketing_db?schema=public
+
+      # Auth
+      JWT_PRIVATE_KEY: ${JWT_PRIVATE_KEY}
+
+      # MinIO (inside the compose network)
+      S3_ENDPOINT: http://minio:9000
+      S3_BUCKET_NAME: ${S3_BUCKET_NAME}
+      S3_ACCESS_KEY: ${S3_ACCESS_KEY}
+      S3_SECRET_KEY: ${S3_SECRET_KEY}
+    ports:
+      - "3000:3000"
+
+
+      # THE HOT RELOAD MAGIC:
+    volumes:
+      - .:/app              # 👈 2. Syncs your local project folder to the container
+      - /app/node_modules   # 👈 3. Protects the container's installed packages
+    command: npm run dev    # 👈 4. Runs your hot-reload script instead of normal start

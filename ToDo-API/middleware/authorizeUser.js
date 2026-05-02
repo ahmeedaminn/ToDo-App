@@ -1,6 +1,23 @@
-export const authorizeUser = (req, res, next) => {
-  if (!req.doc) return res.status(404).json({ error: "User not found" });
+import { asAppError } from "../utils/appError.js";
 
-  if (req.doc._id.equals(req.user._id)) return next();
-  return res.status(403).json({ error: "Access denied." }); // same user can proceed
+export const authorizeUser = (req, res, next) => {
+  // This should normally be caught by `exist(...)`, but we keep a defensive check.
+  if (!req.doc) {
+    return next(
+      asAppError({
+        status: 404,
+        code: "NOT_FOUND",
+        message: "User not found",
+      }),
+    );
+  }
+
+  if (req.doc.id === req.user.id) return next();
+  return next(
+    asAppError({
+      status: 403,
+      code: "FORBIDDEN",
+      message: "Access denied.",
+    }),
+  );
 };

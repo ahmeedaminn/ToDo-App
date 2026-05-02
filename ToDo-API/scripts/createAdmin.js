@@ -1,28 +1,62 @@
-import mongoose from "mongoose";
 import bcrypt from "bcrypt";
-import { User } from "../models/users.js";
 import dotenv from "dotenv";
+import prisma, { disconnectPrisma } from "../startup/prisma.js";
 
 dotenv.config({ path: "../.env" }); // path from scripts folder to root .env
 
-mongoose
-  .connect(process.env.DB_NAME)
-  .then(() => console.log("Connected to DB"))
-  .catch((err) => console.error("DB connection failed:", err));
-
 const createAdminUser = async function () {
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(process.env.INTIAL_ADMIN_PASSWORD, salt);
+  /**
+   * Create initial admin (Prisma/Postgres)
+   * -------------------------------------
+   * This replaces the old Mongoose-based admin bootstrap.
+   *
+   * Required env vars:
+   * - INTIAL_ADMIN_USERNAME
+   * - INTIAL_ADMIN_EMAIL
+   * - INTIAL_ADMIN_PASSWORD
+   */
+  const username = process.env.INTIAL_ADMIN_USERNAME;
+  const email = process.env.INTIAL_ADMIN_EMAIL;
+  const password = process.env.INTIAL_ADMIN_PASSWORD;
 
-  const adminUser = new User({
-    username: process.env.INTIAL_ADMIN_USERNAME,
-    email: process.env.INTIAL_ADMIN_EMAIL,
-    password: hashedPassword,
-    isAdmin: true,
+  if (!username || !email || !password) {
+    throw new Error(
+      "Missing env vars. Expected INTIAL_ADMIN_USERNAME, INTIAL_ADMIN_EMAIL, INTIAL_ADMIN_PASSWORD",
+    );
+  }
+
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(password, salt);
+
+  // If the user already exists, we keep the script idempotent.
+  const existing = await prisma.user.findFirst({
+    where: { OR: [{ email }, { username }] },
+    select: { id: true, username: true, email: true, role: true },
   });
 
-  await adminUser.save();
+  if (existing) {
+    console.log("Admin already exists:", existing);
+    return;
+  }
+
+  const adminUser = await prisma.user.create({
+    data: {
+      username,
+      email,
+      password: hashedPassword,
+      role: "ADMIN",
+    },
+    select: { id: true, username: true, email: true, role: true, createdAt: true },
+  });
+
   console.log("Admin created:", adminUser);
-  mongoose.disconnect();
 };
-createAdminUser();
+
+createAdminUser()
+  .catch((err) => {
+    console.error("Admin creation failed:", err);
+    process.exitCode = 1;
+  })
+  .finally(async () => {
+    await disconnectPrisma();
+  });

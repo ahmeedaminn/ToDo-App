@@ -1,70 +1,81 @@
-// scripts/simpleTestCleanup.js
-import { MongoClient } from "mongodb";
+import dotenv from "dotenv";
+import pg from "pg";
 
-async function cleanupTestDatabase() {
-  const client = new MongoClient("mongodb://localhost:27017");
+/**
+ * Total DB Cleanup (Postgres)
+ * -------------------------
+ * What it does:
+ * - Checks to ensure we are NOT in production.
+ * - Extracts the main DB name from DATABASE_URL.
+ * - Connects to the Postgres server (via the default 'postgres' db).
+ * - Drops and recreates BOTH the main DB and `ticketing_test`.
+ */
 
+dotenv.config({ path: "../.env" });
+
+async function resetDatabases() {
+  // 1. SAFETY LOCK: Never allow this script to run in production.
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("🚨 ABORT: You just tried to wipe the production database. Script blocked.");
+  }
+
+  if (!process.env.DATABASE_URL) {
+    throw new Error("DATABASE_URL is required to reset the databases.");
+  }
+
+  // 2. Extract database names
+  const dbUrl = new URL(process.env.DATABASE_URL);
+  const mainDbName = dbUrl.pathname.substring(1); // Strips the leading '/' (e.g., 'nmu_ticketing')
+  const testDbName = "ticketing_test";
+  
+  // Array of target databases
+  const databasesToReset = [testDbName, mainDbName];
+
+  // 3. Connect to the default 'postgres' admin database
+  const adminUrl = (() => {
+    const u = new URL(process.env.DATABASE_URL);
+    u.pathname = "/postgres";
+    return u.toString();
+  })();
+
+  const { Client } = pg;
+  const client = new Client({ connectionString: adminUrl });
+
+  await client.connect();
+  
   try {
-    console.log("🔥 CLEANING TEST DATABASE...\n");
+    console.log("🔥 INITIATING TOTAL DATABASE RESET...\n");
 
-    await client.connect();
-    console.log("✅ Connected to MongoDB");
+    for (const dbName of databasesToReset) {
+      console.log(`⏳ Terminating connections and dropping: ${dbName}...`);
+      
+      // Terminate any active connections (like Prisma Studio) before dropping
+      await client.query(
+        `
+        SELECT pg_terminate_backend(pid)
+        FROM pg_stat_activity
+        WHERE datname = $1 AND pid <> pg_backend_pid();
+        `,
+        [dbName]
+      );
 
-    // Get the test database
-    const db = client.db("taskMangerTest");
-
-    // Method 1: Drop the entire database
-    console.log("1. Attempting to drop test database...");
-    try {
-      await db.dropDatabase();
-      console.log("✅ Test database dropped successfully!");
-    } catch (error) {
-      console.log("⚠️  Database drop failed, trying collection approach...");
-
-      // Method 2: Drop just the users collection
-      console.log("2. Attempting to drop users collection...");
-      try {
-        const collection = db.collection("users");
-        await collection.drop();
-        console.log("✅ Users collection dropped successfully!");
-      } catch (collError) {
-        console.log("⚠️  Collection drop failed, trying manual cleanup...");
-
-        // Method 3: Manual cleanup
-        console.log("3. Manual cleanup - removing documents and indexes...");
-        const collection = db.collection("users");
-
-        // Remove all documents
-        const deleteResult = await collection.deleteMany({});
-        console.log(`🗑️  Deleted ${deleteResult.deletedCount} documents`);
-
-        // List and drop indexes
-        const indexes = await collection.listIndexes().toArray();
-        console.log(`Found ${indexes.length} indexes`);
-
-        for (const index of indexes) {
-          if (index.name !== "_id_") {
-            try {
-              await collection.dropIndex(index.name);
-              console.log(`✅ Dropped index: ${index.name}`);
-            } catch (indexError) {
-              console.log(
-                `⚠️  Could not drop index ${index.name}: ${indexError.message}`
-              );
-            }
-          }
-        }
-      }
+      // Drop and recreate
+      await client.query(`DROP DATABASE IF EXISTS ${dbName}`);
+      await client.query(`CREATE DATABASE ${dbName}`);
+      
+      console.log(`✅ [${dbName}] wiped and completely recreated.\n`);
     }
 
-    console.log("\n🎉 TEST DATABASE CLEANUP COMPLETED!");
-    console.log("🚀 You can now run: npm test");
-  } catch (error) {
-    console.error("❌ Cleanup failed:", error.message);
+    console.log("✅ All databases reset successfully!");
+    console.log("⚠️  CRITICAL: You just deleted all your Prisma tables in the main DB.");
+    console.log("🚀 Next step: Run 'npx prisma migrate dev' to rebuild your tables.");
+    
   } finally {
-    await client.close();
-    console.log("✅ Disconnected from MongoDB");
+    await client.end();
   }
 }
 
-cleanupTestDatabase();
+resetDatabases().catch((err) => {
+  console.error("❌ Reset failed:", err);
+  process.exitCode = 1;
+});

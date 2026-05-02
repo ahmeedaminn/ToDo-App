@@ -1,0 +1,110 @@
+// This block tells Prisma to generate standard JS/Node code
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Create The ENUMs SQL vs Prisma Schema
+
+// SQL
+// CREATE TYPE "Role" AS ENUM ('PROFESSOR', 'TEACHING ASSISTANT', 'EMPLOYEE', 'ADMIN');
+// CREATE TYPE "Status" AS ENUM ('TODO', 'IN_PROGRESS', 'DONE');
+// CREATE TYPE "Priority" AS ENUM ('LOW', 'MEDIUM', 'HIGH');
+
+// Prisma Schema
+enum Role {
+  PROFESSOR
+  TEACHING_ASSISTANT
+  EMPLOYEE
+  ADMIN
+}
+
+enum Status {
+  TODO
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+// SQL
+// CREATE TABLE "User" (
+//     "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+//     "username" TEXT UNIQUE NOT NULL,
+//     "email" TEXT UNIQUE NOT NULL,
+//     "password" TEXT NOT NULL,
+//     "role" "Role" NOT NULL DEFAULT 'EMPLOYEE',
+//     "tokenValidAfter" TIMESTAMP,
+//     "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+//     "updatedAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+// );
+
+// Prisama Schema
+model User {
+  id              String    @id @default(uuid())
+  username        String    @unique
+  email           String    @unique
+  password        String
+  role            Role      @default(EMPLOYEE)
+  tokenValidAfter DateTime?
+
+  // Reltations
+  createdTasks  Task[] @relation("CreatedTasks")
+  assignedTasks Task[] @relation("AssignedTasks")
+
+  // Audit fields
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// SQL
+// CREATE TABLE "Task" (
+//     "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+//     "title" TEXT NOT NULL,
+//     "description" TEXT NOT NULL,
+//     "status" "TaskStatus" NOT NULL DEFAULT 'TODO',
+//     "priority" "Priority" NOT NULL DEFAULT 'MEDIUM',
+//     "dueDate" TIMESTAMP,
+//     "creatorId" UUID NOT NULL,
+//     "assigneeId" UUID,
+//     "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+//     "updatedAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+//     -- THE CONSTRAINTS (The Glue)
+//     CONSTRAINT fk_creator FOREIGN KEY ("creatorId") REFERENCES "User"("id") ON DELETE CASCADE,
+//     CONSTRAINT fk_assignee FOREIGN KEY ("assigneeId") REFERENCES "User"("id") ON DELETE SET NULL
+// );
+
+// Prisma Schema
+model Task {
+  id          String    @id @default(uuid())
+  title       String
+  description String
+  dueDate     DateTime?
+  status      Status    @default(TODO)
+  priority    Priority  @default(MEDIUM)
+
+  // Bidirectional MVP Fields
+  creatorAttachment  String? // Uploaded by the Professor
+  assigneeAttachment String? // Uploaded by the IT Employee
+  resolutionNotes    String? // The text description the assignee types back
+
+  // Relations
+  creator   User   @relation("CreatedTasks", fields: [creatorId], references: [id])
+  creatorId String
+
+  assignee   User?   @relation("AssignedTasks", fields: [assigneeId], references: [id])
+  assigneeId String?
+
+  // Audit fields
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

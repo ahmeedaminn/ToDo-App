@@ -4,3 +4,4 @@ node_modules/
 dist/
 .todo-cli-cache.json
 .token
+.fake

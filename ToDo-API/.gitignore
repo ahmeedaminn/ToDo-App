@@ -1,0 +1,16 @@
+node_modules
+# Keep environment variables out of version control
+.env
+
+/generated/prisma
+
+# Archived Mongo/Mongoose implementation (kept for reference only)
+_archive_mongo/
+
+# Runtime artifacts / local state
+logs/
+coverage/
+docker-data/
+
+# Jest temp files (if any)
+.jest-cache/

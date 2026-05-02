@@ -1,7 +1,25 @@
+import { asAppError } from "../utils/appError.js";
+
 export const authorizeTaskOwner = (req, res, next) => {
-  if (!req.doc) return res.status(404).json({ error: "Task not found" });
+  // This should normally be caught by `exist(...)`, but we keep a defensive check.
+  if (!req.doc) {
+    return next(
+      asAppError({
+        status: 404,
+        code: "NOT_FOUND",
+        message: "Task not found",
+      }),
+    );
+  }
 
   // For tasks: compare task's owner ID with authenticated user's ID
-  if (req.doc.user.userId.equals(req.user._id)) return next();
-  return res.status(403).json({ error: "Access denied." });
+  if (req.doc.creatorId === req.user.id || req.doc.assigneeId === req.user.id)
+    return next();
+  return next(
+    asAppError({
+      status: 403,
+      code: "FORBIDDEN",
+      message: "Access denied.",
+    }),
+  );
 };

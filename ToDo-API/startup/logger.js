@@ -1,31 +1,27 @@
 import winston from "winston";
-import "winston-mongodb";
-
 import dotenv from "dotenv";
 dotenv.config();
 
 export const logger = winston.createLogger({
   level: "info",
   format: winston.format.combine(
-    winston.format.timestamp(), // add time stamp to each log
-    winston.format.json() // make logs structured JSON
+    winston.format.timestamp(),
+    winston.format.json(),
   ),
   transports: [
+    // 1. Errors go here (O:\your-project\logs\error.log)
     new winston.transports.File({
       filename: "./logs/error.log",
       level: "error",
     }),
+    // 2. Everything goes here
     new winston.transports.File({ filename: "./logs/combined.log" }),
+    // 3. Keep the console colorful for your debugging
     new winston.transports.Console({
       format: winston.format.combine(
         winston.format.colorize(),
-        winston.format.simple()
+        winston.format.simple(),
       ),
-    }),
-    new winston.transports.MongoDB({
-      db: process.env.DB_NAME || process.env.DB_NAME_TEST,
-      collection: "logs",
-      level: "error",
     }),
   ],
   exceptionHandlers: [

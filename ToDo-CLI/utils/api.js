@@ -9,7 +9,7 @@ export const apiRequest = async function (
   method,
   endpoint,
   data = null,
-  authRequired = false
+  authRequired = false,
 ) {
   try {
     const headers = {};

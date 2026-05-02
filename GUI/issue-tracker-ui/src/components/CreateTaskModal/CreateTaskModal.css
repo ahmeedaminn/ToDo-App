@@ -1,0 +1,232 @@
+/* --- THE MODAL LAYOUT --- */
+.modal-backdrop {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(15, 23, 42, 0.65);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal-card {
+  background-color: #ffffff;
+  width: 100%;
+  max-width: 600px;
+  border-radius: 12px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh; /* Prevents it from going off-screen */
+}
+
+/* --- FORM GRID ARCHITECTURE --- */
+.modal-form {
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Exactly 2 columns */
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.full-width {
+  grid-column: 1 / -1; /* Forces the element to span all columns */
+  margin-bottom: 1.25rem;
+}
+
+/* Make the textarea sensible */
+.textarea {
+  resize: vertical;
+  min-height: 80px;
+  font-family: inherit;
+}
+
+.attachment-group {
+  padding-top: 1rem;
+  border-top: 1px dashed var(--border-color);
+}
+
+.file-input {
+  border: 1px solid var(--border-color);
+  padding: 0.5rem;
+  border-radius: 6px;
+  width: 100%;
+  background-color: #f8fafc;
+}
+
+/* --- THE RED + BUTTON (Add this to your Dashboard.css!) --- */
+.btn-fab {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: var(--nmu-red);
+  color: white;
+  font-size: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  box-shadow: 0 4px 12px rgba(147, 26, 35, 0.4);
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  z-index: 100;
+}
+
+.btn-fab:hover {
+  background-color: var(--nmu-red-hover);
+  transform: translateY(-3px); /* Lifts up slightly on hover */
+  box-shadow: 0 6px 16px rgba(147, 26, 35, 0.5);
+}
+
+/* --- MODAL HEADER --- */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 1.5rem 1rem 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 1.5rem;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: var(--text-main);
+}
+
+.btn-close {
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  line-height: 1;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s ease;
+}
+
+.btn-close:hover {
+  color: var(--nmu-red);
+}
+
+/* --- INPUTS & LABELS --- */
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.input-group label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+.input-field {
+  padding: 0.65rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  color: var(--text-main);
+  background-color: #ffffff;
+  transition: border-color 0.2s ease;
+  font-family: inherit;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: var(--nmu-red);
+  box-shadow: 0 0 0 3px rgba(147, 26, 35, 0.1);
+}
+
+/* --- ERROR MESSAGE --- */
+.error-message {
+  background-color: #fef2f2;
+  color: #b91c1c;
+  padding: 0.75rem;
+  border-radius: 6px;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  border: 1px solid #f87171;
+  text-align: center;
+}
+
+/* --- MODAL ACTIONS (FOOTER) --- */
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color);
+}
+
+/* 1. The main input box */
+.react-select__control {
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 6px !important;
+  box-shadow: none !important;
+  padding: 2px !important;
+  cursor: text !important;
+  transition: all 0.2s ease !important;
+}
+
+/* Hover state for the box */
+.react-select__control:hover {
+  border-color: #931a23 !important; /* NMU Red */
+}
+
+/* Focus state for the box */
+.react-select__control--is-focused {
+  border-color: #931a23 !important;
+  box-shadow: 0 0 0 3px rgba(147, 26, 35, 0.1) !important; /* Soft red glow */
+}
+
+/* 2. The dropdown menu container */
+.react-select__menu {
+  border-radius: 6px !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+  overflow: hidden !important;
+  border: 1px solid #e2e8f0 !important;
+  z-index: 999 !important; /* Ensures it pops over your modal footer */
+}
+
+/* 3. Individual options in the dropdown */
+.react-select__option {
+  padding: 10px 12px !important;
+  cursor: pointer !important;
+  transition: background-color 0.15s ease, color 0.15s ease !important;
+  font-size: 0.95rem !important;
+}
+
+/* When hovering over an option with the mouse/keyboard */
+.react-select__option--is-focused {
+  background-color: rgba(147, 26, 35, 0.05) !important; /* Very light NMU red */
+  color: #931a23 !important;
+}
+
+/* When an option is officially clicked and selected */
+.react-select__option--is-selected {
+  background-color: #931a23 !important; /* Solid NMU red */
+  color: white !important;
+  font-weight: 500 !important;
+}
+
+/* 4. Fix the cursors for the interactive icons ("X" and Arrow) */
+.react-select__indicators,
+.react-select__indicator {
+  cursor: pointer !important;
+}
+
+/* Optional: Add a subtle hover effect to the X and Arrow so they feel clickable */
+.react-select__indicator:hover {
+  color: #931a23 !important; /* NMU Red */
+}

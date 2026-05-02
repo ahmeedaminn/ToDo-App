@@ -1,83 +1,149 @@
 import express from "express";
 import bcrypt from "bcrypt";
+// import _ from "lodash";
+import prisma from "../startup/prisma.js";
 import { validate } from "../middleware/validate.js";
 import {
   usersCreateValidate,
   usersUpdateValidate,
-  User,
-} from "../models/users.js";
+} from "../validations/users.js";
 import { auth } from "../middleware/auth.js";
 import { exist } from "../middleware/exist.js";
 import { idValidator } from "../middleware/idValidator.js";
 import { authorizeUser } from "../middleware/authorizeUser.js";
 import { authorizeBoth } from "../middleware/authorizeBoth.js";
 import { authorizeAdmin } from "../middleware/authorizeAdmin.js";
-import _ from "lodash";
+import { generateAuthToken } from "../utils/auth.js";
+import { asAppError } from "../utils/appError.js";
 const router = express.Router();
 
+// get all users (admin only)
 router.get("/", [auth, authorizeAdmin], async (req, res) => {
-  const users = await User.find().select("-password");
+  const users = await prisma.user.findMany({
+    select: {
+      id: true,
+      username: true,
+      email: true,
+      role: true,
+    },
+  });
   res.send(users);
+});
+
+// GET: Fetch all eligible assignees for the frontend dropdown popup
+router.get("/assignees", auth, async (req, res) => {
+  const staff = await prisma.user.findMany({
+    where: {
+      // Only fetch users who actually work there
+      role: {
+        in: ["PROFESSOR", "EMPLOYEE", "TEACHING_ASSISTANT", "ADMIN"],
+      },
+    },
+    // SECURITY: Never send the whole user object (passwords, emails, etc.) to a dropdown!
+    // Only select the exact fields the React popup needs to render the list.
+    select: {
+      id: true,
+      username: true,
+      role: true,
+    },
+  });
+
+  res.send(staff);
 });
 
 // GET id
 router.get(
-  "/by-id/:id",
-  [auth, idValidator, exist(User), authorizeUser],
+  "/:id",
+  [auth, idValidator, exist(prisma.user), authorizeUser],
   async (req, res) => {
-    const user = req.doc;
-    res.send(user);
-  },
-);
-
-router.get(
-  "/by-username/:username",
-  [auth, exist(User), authorizeAdmin],
-  async (req, res) => {
+    // `exist(...)` middleware injects the record into `req.doc`
     const user = req.doc;
 
-    res.send(user);
+    delete user.password; // Remove password from the response
+
+    res.send({
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      role: user.role,
+    });
   },
 );
 
 // POST
 router.post("/", validate(usersCreateValidate), async (req, res) => {
-  const existingUser = await User.findOne({
-    $or: [{ email: req.body.email }, { username: req.body.username }],
+  const { username, email, password, role } = req.body;
+  // 1. Swap findUnique for findFirst so we can use OR!
+  const existingUser = await prisma.user.findFirst({
+    where: {
+      OR: [{ email: email }, { username: username }],
+    },
   });
 
   if (existingUser) {
-    return res.status(400).json({
-      error:
+    throw asAppError({
+      status: 400,
+      code: "USER_ALREADY_EXISTS",
+      message:
         existingUser.email === req.body.email
           ? "User with given email already exists"
           : "User with given username already exists",
+      details: {
+        field: existingUser.email === req.body.email ? "email" : "username",
+      },
     });
   }
 
-  const user = new User(_.pick(req.body, ["username", "password", "email"]));
-
+  // 2. Hash the password BEFORE we touch the database!
   const salt = await bcrypt.genSalt(10);
-  user.password = await bcrypt.hash(user.password, salt);
+  const hasedPassword = await bcrypt.hash(req.body.password, salt);
 
-  await user.save();
+  // 3. SECURITY: Role Sanitization & Privilege Escalation Defense
+  // By default, if they don't provide a role, it defaults to EMPLOYEE.
+  let assignedRole = role || "EMPLOYEE";
 
-  const token = user.generateAuthToken();
+  // Prevent anyone from registering as an ADMIN via the public form
+  if (assignedRole === "ADMIN") {
+    assignedRole = "EMPLOYEE"; // Silently downgrade them, or throw an error
+  }
 
-  res.header("x-auth-token", token).send(user);
+  // 4. Create the user using the newly hashed password
+  /** * SECURITY NOTE:
+   * Manually extracting username, email, and password prevents Mass Assignment attacks.
+   * It ensures hackers cannot inject unauthorized columns into the database.
+   */
+  const user = await prisma.user.create({
+    data: {
+      username: req.body.username,
+      email: req.body.email,
+      password: hasedPassword,
+      role: assignedRole,
+    },
+  });
+
+  const token = generateAuthToken(user);
+
+  // 5. SECURITY: Strip the password before sending the response back
+  delete user.password; // Remove password from the response
+
+  // this is wrong as the res.json closes the connection and the .send will never execute. We should combine them into one res.json call.
+  res.json({ "x-auth-token": token, user });
 });
 
 // POST logout of all devices
 router.post("/logout-all", auth, async (req, res) => {
-  const user = await User.findById(req.user._id);
-  
-  // Update the timestamp to right now
-  user.passwordChangedAt = Date.now();
-  await user.save();
+  const user = await prisma.user.update({
+    // One single database call to find the user AND update the timestamp!
+    where: { id: req.user.id },
+
+    // Prisma requires a standard JavaScript Date object
+    data: {
+      tokenValidAfter: new Date(),
+    },
+  });
 
   res.json({ message: "Successfully logged out of all devices." });
 });
-
 
 // PUT
 router.patch(
@@ -85,7 +151,7 @@ router.patch(
   [
     auth,
     idValidator,
-    exist(User),
+    exist(prisma.user),
     validate(usersUpdateValidate),
     authorizeUser,
   ],
@@ -108,56 +174,48 @@ router.patch(
     for (const [field, value] of Object.entries(uniqueFields)) {
       if (!value) continue;
 
-      const existing = await User.findOne({
-        [field]: value,
-        _id: { $ne: req.params.id },
+      // FindUnique just work with one filter at a time, so we use findFirst with OR to check for duplicates
+      const existing = await prisma.user.findFirst({
+        where: {
+          [field]: value,
+          // Ensure we don't find the same user we're trying to update
+          NOT: { id: req.params.id },
+        },
       });
 
       if (existing) {
-        return res.status(400).json({
-          error: `ERROR 400, user with given ${field} already exists`,
+        throw asAppError({
+          status: 400,
+          code: "USER_ALREADY_EXISTS",
+          message: `User with given ${field} already exists`,
+          details: { field },
         });
       }
 
       updatedData[field] = value;
     }
 
-    const user = req.doc;
-    if (updatedData.username) user.username = updatedData.username;
-    if (updatedData.password) user.password = updatedData.password;
-    if (updatedData.email) user.email = updatedData.email;
+    const updatedUser = await prisma.user.update({
+      where: { id: req.params.id },
+      data: updatedData,
+    });
 
-    await user.save();
+    delete updatedUser.password; // Remove password from the response
 
-    res.send(user);
+    res.send(updatedUser);
   },
 );
 
 // DELETE
 router.delete(
-  "/by-id/:id",
-  [auth, idValidator, exist(User), authorizeUser],
+  "/:id",
+  [auth, idValidator, exist(prisma.user), authorizeUser],
   async (req, res) => {
     const user = req.doc;
 
-    await user.deleteOne();
-
-    res.json({ message: `User ${user.username} deleted successfully` });
-  },
-);
-
-// DELETE
-router.delete(
-  "/by-username/:username",
-  [auth, exist(User), authorizeAdmin],
-  async (req, res) => {
-    const user = req.doc;
-
-    // delete all tasks associated with the user
-    await Task.deleteMany({ "user.userId": user._id });
-
-    // then delete the user
-    await user.deleteOne();
+    await prisma.user.delete({
+      where: { id: user.id },
+    });
 
     res.json({ message: `User ${user.username} deleted successfully` });
   },
