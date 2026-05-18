@@ -6,6 +6,7 @@ import {
   Route,
   Routes,
   Navigate,
+
 } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 
@@ -29,6 +30,15 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        <Route
+          path="/dashboard/:taskId" element={
+            <ProtectedRoute>
+
+              <Dashboard />
+            </ProtectedRoute>
+          } />
+
       </Routes>
     </BrowserRouter>
   );
