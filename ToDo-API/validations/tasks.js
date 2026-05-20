@@ -3,7 +3,7 @@ import Joi from "joi";
 const taskFields = {
   title: Joi.string().min(2).max(50),
   description: Joi.string().min(5).max(500),
-  dueDate: Joi.date(),
+  dueDate: Joi.date().optional().allow(null, 'undefined'), // allow null or undefined for optional date
   status: Joi.string().valid("TODO", "IN_PROGRESS", "COMPLETED"),
   priority: Joi.string().valid("LOW", "MEDIUM", "HIGH", "URGENT"),
   assigneeId: Joi.string().uuid().allow(null, ""),

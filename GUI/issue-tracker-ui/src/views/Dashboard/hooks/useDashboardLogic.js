@@ -245,16 +245,16 @@ export const useDashboardLogic = () => {
       // The Assignee sends text, and OPTIONALLY a file
       const file = e.target.elements.resolutionFile.files[0];
       // If they deleted all text, send null so it clears the database
-      const finalNotes = resolutionNotes.trim() === "" ? null : resolutionNotes;
+      const finalNotes = resolutionNotes.trim() 
 
-      // Prevent submitting if BOTH are completely empty
-      if (!file && !finalNotes) {
-        setError(
-          "You must provide either a file or a note to resolve the ticket.",
-        );
-        setIsUploading(false);
-        return;
-      }
+      // // Prevent submitting if BOTH are completely empty
+      // if (!file && !finalNotes) {
+      //   setError(
+      //     "You must provide either a file or a note to resolve the ticket.",
+      //   );
+      //   setIsUploading(false);
+      //   return;
+      // }
 
       let updatedTask;
       // 1. Update the resolution notes and files

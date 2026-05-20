@@ -227,33 +227,31 @@ router.patch(
     const userId = req.user.id;
     const { resolutionNotes } = req.body;
 
-  
-
     let updateData = {};
 
-    // 1. Initial Validation
-    if (!req.file && !resolutionNotes) {
-      return next(
-        asAppError({
-          status: 400,
-          code: "NO_ATTACHMENT_OR_NOTES",
-          message: "No attachment or resolution notes provided.",
-        }),
-      );
-    }
+    // // 1. Initial Validation
+    // if (!req.file && !resolutionNotes) {
+    //   return next(
+    //     asAppError({
+    //       status: 400,
+    //       code: "NO_ATTACHMENT_OR_NOTES",
+    //       message: "No attachment or resolution notes provided.",
+    //     }),
+    //   );
+    // }
 
     // Map the text notes (if any)
     if (task.creatorId === userId) {
       updateData = {
         resolutionNotes:
-          resolutionNotes !== undefined
+          resolutionNotes !== undefined && resolutionNotes !== null
             ? resolutionNotes
             : task.resolutionNotes,
       };
     } else if (task.assigneeId === userId) {
       updateData = {
         resolutionNotes:
-          resolutionNotes !== undefined
+          resolutionNotes !== undefined && resolutionNotes !== null
             ? resolutionNotes
             : task.resolutionNotes,
       };

@@ -27,7 +27,7 @@ export const resolveTask = async (taskId, file, resolutionNotes) => {
   const formData = new FormData();
 
   if (file) formData.append("file", file); // "file" is the key the server expects, and file is the actual file object from the input
-  if (resolutionNotes) formData.append("resolutionNotes", resolutionNotes); // Add resolution notes if provided
+  if (resolutionNotes !== undefined && resolutionNotes !== null) formData.append("resolutionNotes", resolutionNotes); // Add resolution notes if provided
 
   const data = await apiFetch(`/tasks/${taskId}/resolve`, {
     method: "PATCH",

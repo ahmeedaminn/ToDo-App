@@ -200,7 +200,7 @@ const TicketDetails = ({
                                         className="resolution-textarea"
                                         placeholder="Explain how you fixed the issue..."
                                         value={resolutionNotes}
-                                        onChange={(e) => setResolutionNotes(e.target.value)}
+                                        onChange={(e) => setResolutionNotes(e.target.value.length ? e.target.value : "")}
                                         rows="3"
                                     />
                                     <div className="resolution-form-actions">
@@ -224,7 +224,7 @@ const TicketDetails = ({
                                             {isEditingResolution && (
                                                 <button onClick={(e) => {
                                                     setIsEditingResolution(false);
-                                                    setResolutionNotes(selectedTask.resolutionNotes || "");
+                                                    setResolutionNotes(selectedTask.resolutionNotes || ""); // Revert to old notes
                                                     setError(null);
                                                     e.target.closest('form').reset();
                                                 }
