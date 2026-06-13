@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:3000/api";
+const baseURL = `${import.meta.env.VITE_API_URL}/api`;
 
 // options object is the method and the data coming from the body of the request. It is optional because for GET requests, we don't need to send any data.
 export const apiFetch = async (endpoint, options = {}) => {
@@ -19,7 +19,7 @@ export const apiFetch = async (endpoint, options = {}) => {
   }
 
   // 3. make the fetch from the api
-  const response = await fetch(`${BASE_URL}${endpoint}`, {
+  const response = await fetch(`${baseURL}${endpoint}`, {
     ...options,
     headers,
   });

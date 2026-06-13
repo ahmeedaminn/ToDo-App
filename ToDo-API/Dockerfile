@@ -13,8 +13,10 @@ RUN npm ci
 COPY . .
 
 # Prisma client generation is required at runtime.
-# This runs during build so the runtime image doesn't need dev dependencies.
 RUN npx prisma generate
+
+# Move prune here! Shrink the folder BEFORE we copy it to the final image
+RUN npm prune --omit=dev
 
 
 FROM node:20-alpine AS runner
@@ -24,18 +26,16 @@ ENV NODE_ENV=production
 # Create the user
 RUN addgroup -S nodejs && adduser -S nodeuser -G nodejs
 
-# Copy code
+# THE FIX: Copy the files and set ownership at the exact same time (Takes milliseconds)
 COPY --from=deps --chown=nodeuser:nodejs /app /app
 
-# Reduce image size
-RUN npm prune --omit=dev
 
-# THE FIX: Create the logs directory and ONLY change ownership of that specific folder
-RUN mkdir -p ./logs && chown nodeuser:nodejs ./logs
+# ---> ADD THIS EXACT LINE <---
+RUN mkdir -p /app/logs && chown nodeuser:nodejs /app/logs
 
 # Now we drop privileges
 USER nodeuser
 
 EXPOSE 3000
 
-CMD ["node", "index.js"]
+CMD npx prisma db push && node index.js

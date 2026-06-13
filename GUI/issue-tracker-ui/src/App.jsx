@@ -34,7 +34,6 @@ function App() {
         <Route
           path="/dashboard/:taskId" element={
             <ProtectedRoute>
-
               <Dashboard />
             </ProtectedRoute>
           } />

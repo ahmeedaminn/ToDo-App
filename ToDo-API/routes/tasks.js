@@ -89,7 +89,13 @@ router.get(
 
     try {
       // Example: http://127.0.0.1:9000/bucket-name/12345.pdf -> 12345.pdf
-      const bucketName = process.env.S3_BUCKET_NAME;
+      const isProduction = process.env.NODE_ENV === "production";
+
+      // 2. Pick the correct bucket name based on the environment
+      const bucketName = isProduction
+        ? process.env.AWS_S3_BUCKET_NAME // Uses: 'nmu-ticketing-bucket' in AWS
+        : process.env.S3_BUCKET_NAME; // Uses: 'task-files' locally
+
       const presignedUrls = {};
 
       // 👉 THE FIX: Bulletproof Helper Function
@@ -265,7 +271,12 @@ router.patch(
       );
     }
 
-    const bucketName = process.env.S3_BUCKET_NAME;
+    const isProduction = process.env.NODE_ENV === "production";
+
+    // 2. Pick the correct bucket name based on the environment
+    const bucketName = isProduction
+      ? process.env.AWS_S3_BUCKET_NAME // Uses: 'nmu-ticketing-bucket' in AWS
+      : process.env.S3_BUCKET_NAME; // Uses: 'task-files' locally
     let uniqueFilename = null;
     let command = null;
 
@@ -364,7 +375,10 @@ router.delete(
     const task = req.doc;
 
     try {
-      const bucketName = process.env.S3_BUCKET_NAME;
+      const isProduction = process.env.NODE_ENV === "production";
+      const bucketName = isProduction
+        ? process.env.AWS_S3_BUCKET_NAME
+        : process.env.S3_BUCKET_NAME;
 
       const deleteFromS3 = async (attachmentUrl) => {
         const urlParts = attachmentUrl.split("/");
@@ -431,7 +445,13 @@ router.delete(
       // 2. Extract just the filename from the URL
       // Example URL: http://127.0.0.1:9000/university-tickets/12345.pdf
       const uniqueFilename = attachmentToDeleteUrl.split("/").pop();
-      const bucketName = process.env.S3_BUCKET_NAME;
+
+      const isProduction = process.env.NODE_ENV === "production";
+
+      // 2. Pick the correct bucket name based on the environment
+      const bucketName = isProduction
+        ? process.env.AWS_S3_BUCKET_NAME // Uses: 'nmu-ticketing-bucket' in AWS
+        : process.env.S3_BUCKET_NAME; // Uses: 'task-files' locally
 
       const command = new DeleteObjectCommand({
         Bucket: bucketName,
